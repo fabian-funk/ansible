@@ -1,0 +1,18 @@
+---
+# tasks file for roles/ansible-configure-ufw
+
+- name: install ufw
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+
+- name: deny everything and enable UFW
+  ufw:
+    state: enabled
+    policy: deny
+
+- name: Allow SSH Traffic
+  ufw:
+    rule: allow
+    port: 22
+    log: yes

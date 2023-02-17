@@ -1,0 +1,68 @@
+---
+# tasks file for roles/ansible-configure-node-exporter
+
+- name: download node-exporter
+  ansible.builtin.get_url:
+    url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}.tar.gz"
+    dest: /tmp/
+
+- name: extract node-exporter
+  ansible.builtin.unarchive:
+    src: "/tmp/node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}.tar.gz"
+    dest: /tmp/
+    remote_src: yes
+
+- name: copy nodex-exporter to /usr/local/bin
+  ansible.builtin.copy:
+    src: "/tmp/node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}/node_exporter"
+    dest: /usr/local/bin/node_exporter
+    owner: root
+    group: root
+    mode: u+rwx,g+rx,o+x
+    remote_src: yes
+
+- name: add group node-exporter
+  ansible.builtin.group:
+    name: node-exporter
+    state: present
+    system: true
+
+- name: add user node-exporter
+  ansible.builtin.user:
+    name: node-exporter
+    group: node-exporter
+    shell: /sbin/nologin
+
+- name: Copy systemd file
+  ansible.builtin.copy:
+    src: node-exporter.service
+    dest: /etc/systemd/system/
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Just force systemd to re-execute itself (2.8 and above)
+  ansible.builtin.systemd:
+    daemon_reexec: true
+
+- name: Enable and start node-exporter service
+  ansible.builtin.systemd:
+    state: started
+    name: node-exporter
+    enabled: true
+
+- name: Open Port 9100 for node-exporter
+  ufw:
+    rule: allow
+    port: 9100
+    log: yes
+
+- name: remove "/tmp/node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}.tar.gz"
+  file:
+    path: "/tmp/node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}.tar.gz"
+    state: absent
+
+- name: remove "/tmp/node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}"
+  file:
+    path: "/tmp/node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}"
+    state: absent

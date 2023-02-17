@@ -1,0 +1,5 @@
+---
+# defaults file for roles/ansible-configure-node-exporter
+
+node_exporter_version: "1.5.0"
+node_exporter_arch: "linux-armv6"

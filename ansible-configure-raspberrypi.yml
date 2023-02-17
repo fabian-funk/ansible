@@ -1,0 +1,13 @@
+- name: Configure Raspberry Pi
+  hosts: all
+  become: yes
+
+  roles:
+    - role: ansible-configure-sshd
+    - role: ansible-dist-upgrade
+    - role: hifis.unattended_upgrades
+      unattended_origins_patterns:
+        - 'origin=Raspbian,codename=${distro_codename},label=Raspbian'
+    - role: ansible-configure-ufw
+    - role: ansible-configure-node-exporter
+
