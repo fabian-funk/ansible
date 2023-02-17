@@ -1,0 +1,19 @@
+---
+# tasks file for roles/ansible-download-software
+
+- name: Download "{{ download_url }}"
+  ansible.builtin.unarchive:
+    src: "{{ download_url | mandatory }}"
+    dest: /tmp/
+    remote_src: yes
+    list_files: yes
+  register: archive_contents
+
+- name: copy "{{ archive_contents[0] }}/{{ file_name }}" to /usr/local/bin
+  ansible.builtin.copy:
+    src: "/tmp/{{ archive_contents[0] }}/{{ file_name | mandatory }}"
+    dest: "/usr/local/bin/{{ file_name | mandatory }}"
+    owner: root
+    group: root
+    mode: u+rwx,g+rx,o+x
+    remote_src: yes

@@ -1,0 +1,4 @@
+---
+# defaults file for roles/ansible-download-software
+file_name: "{{ undef(hint='You must specify file_name') }}"
+download_url: "{{ undef(hint='You must specify download_url') }}"

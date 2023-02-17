@@ -1,0 +1,11 @@
+- name: add group "{{ group_name }}"
+  ansible.builtin.group:
+    name: "{{ group_name | mandatory }}"
+    state: present
+    system: true
+
+- name: add user "{{ user_name }}"
+  ansible.builtin.user:
+    name: "{{ user_name | mandatory}}"
+    group: node-exporter
+    shell: /sbin/nologin

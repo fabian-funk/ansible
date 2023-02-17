@@ -1,0 +1,4 @@
+---
+# defaults file for roles/ansible-add-user
+user_name: "{{ undef(hint='You must specify username') }}"
+group_name: "{{ undef(hint='You must specify group_name') }}"
