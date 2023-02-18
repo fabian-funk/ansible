@@ -1,0 +1,7 @@
+- name: Configure Raspberry Pi
+  hosts: all
+  become: yes
+
+  roles:
+  - role: ansible-configure-node-exporter
+  
